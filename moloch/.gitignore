@@ -1,0 +1,5 @@
+*.rpm
+*.mmdb
+*.csv
+*.sample
+oui.txt

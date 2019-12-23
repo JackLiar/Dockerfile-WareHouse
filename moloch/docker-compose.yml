@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.5.1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    container_name: elasticsearch
+    hostname: elasticsearch
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health?wait_for_status=yellow"]
+      interval: 30s
+      timeout: 10s
+      retries: 1
+    environment:
+      - discovery.type=single-node
+  kibana:
+    image: kibana:7.5.1
+    ports:
+      - "5601:5601"
+    container_name: kibana
+    hostname: kibana
+    depends_on:
+      - elasticsearch
+  moloch:
+    image: moloch:2.1.2
+    container_name: moloch
+    environment:
+      # Make this line true on first execution and false every other time
+      - ES_HOST=localhost
+      - ES_PORT=9200
+      - MOLOCH_INTERFACE=wlo1
+      - MOLOCH_PASSWORD=admin
+      - INITALIZEDB=true
+      - WIPEDB=false
+      - CAPTURE=on
+      - VIEWER=on
+    depends_on:
+      - elasticsearch
+    ports:
+      - 8005:8005
+    tty: true
+    privileged: true
+    # Moloch need to turn off some network card options, so use host mode to operate it directly
+    network_mode: host
