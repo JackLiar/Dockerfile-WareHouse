@@ -55,3 +55,7 @@ services:
     volumes:
       - ./scripts/startmoloch.sh:/data/moloch/bin/startmoloch.sh
       - ./raw:/data/moloch/raw
+      - ./etc/GeoLite2-ASN.mmdb:/data/moloch/etc/GeoLite2-ASN.mmdb
+      - ./etc/GeoLite2-Country.mmdb:/data/moloch/etc/GeoLite2-Country.mmdb
+      - ./etc/ipv4-address-space.csv:/data/moloch/etc/ipv4-address-space.csv
+      - ./etc/oui.txt:/data/moloch/etc/oui.txt
