@@ -26,6 +26,8 @@ services:
     hostname: kibana
     depends_on:
       - elasticsearch
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
   moloch:
     image: moloch:2.1.2
     container_name: moloch
