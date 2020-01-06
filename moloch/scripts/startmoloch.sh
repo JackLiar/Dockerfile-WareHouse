@@ -2,16 +2,33 @@
 
 echo "Giving ElasticSearch(http://$ES_HOST:$ES_PORT) time to start..."
 sleep 10
-until curl -sS "http://$ES_HOST:$ES_PORT/_cluster/health?wait_for_status=yellow"
-do
-    echo "Waiting for ES to start"
-    sleep 1
-done
+if [ -z "$ES_USER" ] || [ -z "$ES_PASSWORD" ]
+then
+    until curl -sS "http://$ES_HOST:$ES_PORT/_cluster/health?wait_for_status=yellow"
+    do
+        echo "Waiting for ES to start"
+        sleep 1
+    done
+else
+    until curl -u "$ES_USER:$ES_PASSWORD" -sS "http://$ES_HOST:$ES_PORT/_cluster/health?wait_for_status=yellow"
+    do
+        echo "Waiting for ES to start"
+        sleep 1
+    done
+fi
 echo "Connect ElasticSearch(http://$ES_HOST:$ES_PORT) successfully!"
 
 # prepare environment variables
 sed -i -- 's/not-set/no/g' /data/moloch/bin/Configure
-export MOLOCH_ELASTICSEARCH="http://$ES_HOST:$ES_PORT"
+if [ -z "$ES_USER" ] || [ -z "$ES_PASSWORD" ]
+then
+    export MOLOCH_ELASTICSEARCH="http://$ES_HOST:$ES_PORT"
+else
+    echo "Using a ACL enabled elasticsearch!"
+    export MOLOCH_ELASTICSEARCH="http://$ES_USER:$ES_PASSWORD@$ES_HOST:$ES_PORT"
+    echo "$MOLOCH_ELASTICSEARCH"
+fi
+
 
 # Configure Moloch to Run
 if [ ! -f /data/configured ]; then

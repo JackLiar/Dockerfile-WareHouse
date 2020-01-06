@@ -15,6 +15,9 @@ services:
       retries: 1
     environment:
       - discovery.type=single-node
+      # - xpack.security.enabled=true
+    volumes:
+      - ./data:/usr/share/elasticsearch/data
   kibana:
     image: kibana:7.5.1
     ports:
@@ -30,6 +33,8 @@ services:
       # Make this line true on first execution and false every other time
       - ES_HOST=localhost
       - ES_PORT=9200
+      - ES_USER=elastic
+      - ES_PASSWORD=password
       - MOLOCH_INTERFACE=wlo1
       - MOLOCH_PASSWORD=admin
       - INITALIZEDB=true
@@ -44,3 +49,6 @@ services:
     privileged: true
     # Moloch need to turn off some network card options, so use host mode to operate it directly
     network_mode: host
+    volumes:
+      - ./scripts/startmoloch.sh:/data/moloch/bin/startmoloch.sh
+      - ./raw:/data/moloch/raw
