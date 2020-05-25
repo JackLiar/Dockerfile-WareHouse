@@ -1,0 +1,1 @@
+docker build -t jackwzh/python:3.8.0 .
