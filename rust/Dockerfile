@@ -1,18 +1,27 @@
 FROM centos:7.3.1611
+ARG RUST_VERSION
+ARG RUST_ANALYZER_VERSION
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
-    PATH=/usr/local/cargo/bin:$PATH \
-    RUST_VERSION=1.43.1
+    PATH=/usr/local/cargo/bin:$PATH
 RUN set -eux; \
-    yum install -y gcc wget; \
-    url="https://static.rust-lang.org/rustup/dist/x86_64-unknown-linux-gnu/rustup-init"; \
-    wget "$url"; \
+    sed -e 's|^mirrorlist=|#mirrorlist=|g' \
+        -e 's|^#baseurl=http://mirror.centos.org/centos|baseurl=https://mirrors.ustc.edu.cn/centos|g' \
+        -i.bak \
+        /etc/yum.repos.d/CentOS-Base.repo; \
+    yum install -y git gcc; \
+    yum clean all; \
+    url="https://static.rust-lang.org/rustup/archive/1.23.1/x86_64-unknown-linux-gnu/rustup-init"; \
+    curl -OL "$url"; \
     chmod +x rustup-init; \
-    ./rustup-init -y --no-modify-path --default-toolchain $RUST_VERSION; \
+    ./rustup-init -y --no-modify-path --default-toolchain $RUST_VERSION -c llvm-tools-preview -c rust-src \
     rm rustup-init; \
     chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
     rustup --version; \
     cargo --version; \
-    rustc --version;
+    rustc --version; \
+    cargo install --git https://github.com/rust-analyzer/rust-analyzer.git --tag $RUST_ANALYZER_VERSION rust-analyzer; \
+    cargo install flamegraph; \
+    rm -rf $CARGO_HOME/git $CARGO_HOME/registry;
 
 CMD [ "/bin/bash" ]
