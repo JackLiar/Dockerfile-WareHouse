@@ -1,9 +1,11 @@
 FROM centos:7.3.1611
-RUN yum install -y gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel git xz && \
-    yum clean all && \
-    rm -rf /var/cache/yum
+ARG PYENV_VERSION
+RUN curl -o /opt/peynv.tar.gz -L https://github.com/pyenv/pyenv/archive/refs/tags/${PYENV_VERSION}.tar.gz; \
+    tar xf /opt/peynv.tar.gz -C /opt; \
+    rm /opt/peynv.tar.gz; \
+    mv /opt/pyenv-${PYENV_VERSION} /opt/pyenv
+
 ENV PYENV_ROOT="/opt/pyenv"
-RUN git clone https://github.com/pyenv/pyenv.git ${PYENV_ROOT} --depth 1
 ENV PATH="$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"
 
 CMD [ "/bin/bash" ]
