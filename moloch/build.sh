@@ -20,7 +20,7 @@ if [ "$1" == "--update" ];then
         https://raw.githubusercontent.com/wireshark/wireshark/master/manuf
 fi
 
-export MOLOCH_VERSION=2.1.2
+export MOLOCH_VERSION=2.7.1
 docker build \
     --build-arg MOLOCH_VERSION=$MOLOCH_VERSION \
-    --force-rm --tag moloch:$MOLOCH_VERSION . 
+    --force-rm --tag moloch:centos7-$MOLOCH_VERSION .
