@@ -2,10 +2,10 @@ version: '3'
 
 services:
   elasticsearch:
-    image: elasticsearch:7.5.1
+    image: elasticsearch:7.12.0
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - 9200:9200
+      - 9300:9300
     container_name: elasticsearch
     hostname: elasticsearch
     healthcheck:
@@ -15,47 +15,61 @@ services:
       retries: 1
     environment:
       - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      # - xpack.security.enabled=true
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      - xpack.security.enabled=false
     volumes:
       - ./data:/usr/share/elasticsearch/data
   kibana:
-    image: kibana:7.5.1
+    image: kibana:7.12.0
     ports:
-      - "5601:5601"
+      - 5601:5601
     container_name: kibana
     hostname: kibana
     depends_on:
       - elasticsearch
     volumes:
       - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-  moloch:
-    image: moloch:2.1.2
-    container_name: moloch
+  moloch-capture:
+    image: moloch:centos7-2.7.1
+    container_name: moloch-capture
     environment:
       # Make this line true on first execution and false every other time
       - ES_HOST=localhost
       - ES_PORT=9200
       - ES_USER=elastic
       - ES_PASSWORD=password
-      - MOLOCH_INTERFACE=wlo1
+      - MOLOCH_INTERFACE=eth0
       - MOLOCH_PASSWORD=admin
-      - INITALIZEDB=true
+      - INITALIZEDB=false
       - WIPEDB=false
-      - CAPTURE=on
+      - CAPTURE=off
+      - VIEWER=off
+    depends_on:
+      - elasticsearch
+    tty: true
+    privileged: true
+    # Moloch need to turn off some network card options, so use host mode to operate it directly
+    # network_mode: host
+    volumes:
+      - ./raw:/data/moloch/raw
+  moloch-viewer:
+    image: moloch:centos7-2.7.1
+    container_name: moloch-viewer
+    environment:
+      # Make this line true on first execution and false every other time
+      - ES_HOST=elasticsearch
+      - ES_PORT=9200
+      # - ES_USER=elastic
+      # - ES_PASSWORD=password
+      - MOLOCH_INTERFACE=eth0
+      - MOLOCH_PASSWORD=admin
+      - INITALIZEDB=false
+      - WIPEDB=false
+      - CAPTURE=off
       - VIEWER=on
     depends_on:
       - elasticsearch
     ports:
       - 8005:8005
-    tty: true
-    privileged: true
-    # Moloch need to turn off some network card options, so use host mode to operate it directly
-    network_mode: host
     volumes:
       - ./scripts/startmoloch.sh:/data/moloch/bin/startmoloch.sh
-      - ./raw:/data/moloch/raw
-      - ./etc/GeoLite2-ASN.mmdb:/data/moloch/etc/GeoLite2-ASN.mmdb
-      - ./etc/GeoLite2-Country.mmdb:/data/moloch/etc/GeoLite2-Country.mmdb
-      - ./etc/ipv4-address-space.csv:/data/moloch/etc/ipv4-address-space.csv
-      - ./etc/oui.txt:/data/moloch/etc/oui.txt
