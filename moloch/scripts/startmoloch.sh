@@ -51,24 +51,12 @@ echo "Visit http://127.0.0.1:8005 with your favorite browser."
 echo "  user: admin"
 echo "  password: $MOLOCH_PASSWORD"
 
-if [ "$CAPTURE" = "on" ]
-then
+if [ "$CAPTURE" = "on" ]; then
     echo "Launch capture..."
     # Turn some network interface options off, otherwise capture program would not function
     /bin/bash /data/moloch/bin/moloch_config_interfaces.sh
-    if [ "$VIEWER" = "on" ]
-    then
-        # Background execution
-        /data/moloch/bin/moloch-capture >> /data/moloch/logs/capture.log 2>&1 &
-    else
-        # If only capture, foreground execution
-        /data/moloch/bin/moloch-capture |tee -a /data/moloch/logs/capture.log 2>&1
-    fi
-fi
-
-if [ "$VIEWER" = "on" ]
-then
+    /data/moloch/bin/moloch-capture |tee -a /data/moloch/logs/capture.log 2>&1
+elif [ "$VIEWER" = "on" ]; then
     echo "Launch viewer..."
     /bin/sh -c 'cd /data/moloch/viewer; /data/moloch/bin/node viewer.js -c /data/moloch/etc/config.ini | tee -a /data/moloch/logs/viewer.log 2>&1' 
 fi 
-
