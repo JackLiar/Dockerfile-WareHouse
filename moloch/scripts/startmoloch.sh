@@ -6,13 +6,13 @@ then
 else
     curl -u "$ES_USER:$ES_PASSWORD" -sS "http://$ES_HOST:$ES_PORT/_cluster/health?wait_for_status=yellow"
 fi
-# Just print a new line, better reading
-echo 
 
 if [ $? -ne 0 ]; then
+    echo
     echo "${ES_HOST}:${ES_PORT} is unavaliable\n"
     exit -1
 fi
+echo
 echo "Connect ElasticSearch(http://$ES_HOST:$ES_PORT) successfully!"
 
 # prepare environment variables
