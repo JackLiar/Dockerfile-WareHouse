@@ -23,4 +23,4 @@ fi
 export MOLOCH_VERSION=2.7.1
 docker build \
     --build-arg MOLOCH_VERSION=$MOLOCH_VERSION \
-    --force-rm --tag moloch:centos7-$MOLOCH_VERSION .
+    --force-rm --tag moloch:$MOLOCH_VERSION-centos7 .

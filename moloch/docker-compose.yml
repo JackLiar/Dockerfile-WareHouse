@@ -53,8 +53,9 @@ services:
     volumes:
       - ./raw:/data/moloch/raw
   moloch-viewer:
-    image: moloch:centos7-2.7.1
+    image: moloch:2.7.1-centos7
     container_name: moloch-viewer
+    hostname: viewer
     environment:
       # Make this line true on first execution and false every other time
       - ES_HOST=elasticsearch
@@ -73,3 +74,5 @@ services:
       - 8005:8005
     volumes:
       - ./scripts/startmoloch.sh:/data/moloch/bin/startmoloch.sh
+      - ./raw:/data/moloch/raw
+    restart: always
