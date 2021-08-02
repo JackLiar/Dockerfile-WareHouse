@@ -55,7 +55,7 @@ if [ "$CAPTURE" = "on" ]; then
     echo "Launch capture..."
     # Turn some network interface options off, otherwise capture program would not function
     /bin/bash /data/moloch/bin/moloch_config_interfaces.sh
-    /data/moloch/bin/moloch-capture |tee -a /data/moloch/logs/capture.log 2>&1
+    /data/moloch/bin/moloch-capture ${OPTIONS} |tee -a /data/moloch/logs/capture.log 2>&1
 elif [ "$VIEWER" = "on" ]; then
     echo "Launch viewer..."
     /bin/sh -c 'cd /data/moloch/viewer; /data/moloch/bin/node viewer.js -c /data/moloch/etc/config.ini | tee -a /data/moloch/logs/viewer.log 2>&1' 
