@@ -44,7 +44,7 @@ services:
       - WIPEDB=false
       - CAPTURE=on
       - VIEWER=off
-      - OPTIONS="--host moloch --node moloch"
+      - OPTIONS=--host moloch --node moloch
     depends_on:
       - elasticsearch
     tty: true
