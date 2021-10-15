@@ -20,7 +20,7 @@ if [ "$1" == "--update" ];then
         https://raw.githubusercontent.com/wireshark/wireshark/master/manuf
 fi
 
-export MOLOCH_VERSION=2.7.1
+export ARKIME_VERSION=3.1.1
 docker build \
-    --build-arg MOLOCH_VERSION=$MOLOCH_VERSION \
-    --force-rm --tag moloch:$MOLOCH_VERSION-centos7 .
+    --build-arg ARKIME_VERSION=$ARKIME_VERSION \
+    --force-rm --tag arkime:$ARKIME_VERSION-centos7 .

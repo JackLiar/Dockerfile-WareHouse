@@ -1,28 +1,24 @@
 FROM centos:7.3.1611
 
-ARG MOLOCH_VERSION=2.7.1
-ARG MOLOCH_RPM_NAME="moloch-${MOLOCH_VERSION}-1.x86_64.rpm"
+ARG ARKIME_VERSION=3.1.1
+ARG ARKIME_RPM_NAME="arkime-${ARKIME_VERSION}-1.x86_64.rpm"
 
 # add scripts
-COPY scripts /data/moloch/bin
-COPY etc/* /data/moloch/etc/
+COPY scripts /opt/arkime/bin
+COPY etc/* /opt/arkime/etc/
 
-RUN curl -C - -OL "https://s3.amazonaws.com/files.molo.ch/builds/centos-7/${MOLOCH_RPM_NAME}"; \
-    sed -e 's|^mirrorlist=|#mirrorlist=|g' \
-        -e 's|^#baseurl=http://mirror.centos.org/centos|baseurl=https://mirrors.ustc.edu.cn/centos|g' \
-        -i.bak \
-        /etc/yum.repos.d/CentOS-Base.repo; \
-    yum install -y ${MOLOCH_RPM_NAME} wget net-tools; \
+RUN curl -C - -OL "https://s3.amazonaws.com/files.molo.ch/builds/centos-7/${ARKIME_RPM_NAME}"; \
+    yum install -y ${ARKIME_RPM_NAME} wget net-tools; \
     yum clean all; \
-    rm -rf /var/cache/yum ${MOLOCH_RPM_NAME}; \
-    chmod +x /data/moloch/bin/startmoloch.sh; \
-    chmod +x /data/moloch/bin/wipemoloch.sh;\
-    chmod +x /data/moloch/bin/moloch-parse-pcap-folder.sh
+    rm -rf /var/cache/yum ${ARKIME_RPM_NAME}; \
+    chmod +x /opt/arkime/bin/startarkime.sh; \
+    chmod +x /opt/arkime/bin/wipearkime.sh;\
+    chmod +x /opt/arkime/bin/arkime-parse-pcap-folder.sh
 
 ENV ES_HOST=localhost
 ENV ES_PORT=9200
-ENV MOLOCH_INTERFACE=eth0
-ENV MOLOCH_PASSWORD=admin
+ENV ARKIME_INTERFACE=eth0
+ENV ARKIME_PASSWORD=admin
 # Initalize is used to reset the environment from scratch and rebuild a new ES Stack
 ENV INITALIZEDB=false
 # Wipe is the same as initalize except it keeps users intact
@@ -30,9 +26,9 @@ ENV WIPEDB=false
 ENV CAPTURE=off
 ENV VIEWER=off
 # Update Path
-ENV PATH="/data:/data/moloch/bin:${PATH}"
+ENV PATH="/opt:/opt/arkime/bin:${PATH}"
 
 EXPOSE 8005
-WORKDIR /data/moloch
+WORKDIR /opt/arkime
 
-CMD [ "/bin/bash", "-c", "/data/moloch/bin/startmoloch.sh"]
+CMD [ "/bin/bash", "-c", "/opt/arkime/bin/startarkime.sh"]

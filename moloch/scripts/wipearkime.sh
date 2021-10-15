@@ -6,4 +6,4 @@ do
     sleep 1                                                                             
 done                                                                                    
 #Wipe is the same initalize except it keeps users intact
-echo WIPE | /data/moloch/db/db.pl http://$ES_HOST:$ES_PORT wipe
+echo WIPE | /opt/arkime/db/db.pl http://$ES_HOST:$ES_PORT wipe

@@ -2,7 +2,7 @@ version: '3'
 
 services:
   elasticsearch:
-    image: elasticsearch:7.13.4
+    image: elasticsearch:7.14.1
     ports:
       - 9200:9200
       - 9300:9300
@@ -20,7 +20,7 @@ services:
     volumes:
       - ./data:/usr/share/elasticsearch/data
   kibana:
-    image: kibana:7.13.4
+    image: kibana:7.14.1
     ports:
       - 5601:5601
     container_name: kibana
@@ -29,52 +29,53 @@ services:
       - elasticsearch
     volumes:
       - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-  moloch-capture:
-    image: moloch:centos7-2.7.1
-    container_name: moloch-capture
+  arkime-capture:
+    image: arkime:3.1.1-centos7
+    container_name: arkime-capture
     environment:
       - ES_HOST=localhost
       - ES_PORT=9200
-      - ES_USER=elastic
-      - ES_PASSWORD=password
+      # - ES_USER=elastic
+      # - ES_PASSWORD=password
       # set the target network interface you want to listen on
-      - MOLOCH_INTERFACE=eth0
-      - MOLOCH_PASSWORD=admin
+      - ARKIME_INTERFACE=eth0
+      - ARKIME_PASSWORD=admin
       - INITALIZEDB=false
       - WIPEDB=false
       - CAPTURE=on
       - VIEWER=off
-      - OPTIONS=--host moloch --node moloch
+      - OPTIONS=--host arkime --node arkime
     depends_on:
       - elasticsearch
     tty: true
     privileged: true
-    # Moloch need to turn off some network card options, so use host mode to operate it directly
+    # Arkime need to turn off some network card options, so use host mode to operate it directly
     network_mode: host
     volumes:
-      - ./scripts/startmoloch.sh:/data/moloch/bin/startmoloch.sh
-      - ./raw:/data/moloch/raw
-  moloch-viewer:
-    image: moloch:2.7.1-centos7
-    container_name: moloch-viewer
-    hostname: moloch
+      - ./scripts/startarkime.sh:/opt/arkime/bin/startarkime.sh
+      - ./raw:/opt/arkime/raw
+  arkime-viewer:
+    image: arkime:3.1.1-centos7
+    container_name: arkime-viewer
+    hostname: arkime
     environment:
       # Make this line true on first execution and false every other time
       - ES_HOST=elasticsearch
       - ES_PORT=9200
       # - ES_USER=elastic
       # - ES_PASSWORD=password
-      - MOLOCH_INTERFACE=eth0
-      - MOLOCH_PASSWORD=admin
+      - ARKIME_INTERFACE=eth0
+      - ARKIME_PASSWORD=admin
       - INITALIZEDB=false
       - WIPEDB=false
       - CAPTURE=off
       - VIEWER=on
+      # - OPTIONS=--debug
     depends_on:
       - elasticsearch
     ports:
       - 8005:8005
     volumes:
-      - ./scripts/startmoloch.sh:/data/moloch/bin/startmoloch.sh
-      - ./raw:/data/moloch/raw
+      - ./scripts/startarkime.sh:/opt/arkime/bin/startarkime.sh
+      - ./raw:/data/arkime/raw
     restart: always
