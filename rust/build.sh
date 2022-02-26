@@ -1,7 +1,9 @@
 #/bin/bash
-export RUST_VERSION=1.54.0
+export RUST_VERSION=1.59.0
+
 
 docker build \
-    --build-arg RUST_VERSION=$RUST_VERSION \
-    --build-arg RUST_ANALYZER_VERSION='2021-08-09' \
+    --build-arg RUST_VERSION=${RUST_VERSION} \
+    --build-arg RUSTUP_VERSION=1.24.3 \
+    --build-arg RUST_ANALYZER_VERSION=2022-02-21 \
     -t rust:"${RUST_VERSION}-centos7-devenv" .
