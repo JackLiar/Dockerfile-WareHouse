@@ -17,26 +17,26 @@ echo
 echo "Connect ElasticSearch(http://$ES_HOST:$ES_PORT) successfully!"
 
 # prepare environment variables
-sed -i -- 's/not-set/no/g' /opt/arkime/bin/Configure
+sed -i -- 's/not-set/no/g' /data/moloch/bin/Configure
 if [ -z "$ES_USER" ] || [ -z "$ES_PASSWORD" ]
 then
-    export ARKIME_ELASTICSEARCH="http://$ES_HOST:$ES_PORT"
+    export MOLOCH_ELASTICSEARCH="http://$ES_HOST:$ES_PORT"
 else
     echo "Using a ACL enabled elasticsearch!"
-    export ARKIME_ELASTICSEARCH="http://$ES_USER:$ES_PASSWORD@$ES_HOST:$ES_PORT"
-    echo "$ARKIME_ELASTICSEARCH"
+    export MOLOCH_ELASTICSEARCH="http://$ES_USER:$ES_PASSWORD@$ES_HOST:$ES_PORT"
+    echo "$MOLOCH_ELASTICSEARCH"
 fi
 
-# Configure Arkime to Run
+# Configure Moloch to Run
 if [ ! -f /opt/configured ]; then
     touch /opt/configured
-    /opt/arkime/bin/Configure
+    /data/moloch/bin/Configure
 fi
 
 # Give option to init ElasticSearch
 if [ "$INITALIZEDB" = "true" ] ; then
-    echo INIT | /opt/arkime/db/db.pl http://$ES_HOST:$ES_PORT init
-    /opt/arkime/bin/arkime_add_user.sh admin "Admin User" $ARKIME_PASSWORD --admin
+    echo INIT | /data/moloch/db/db.pl http://$ES_HOST:$ES_PORT init
+    /data/moloch/bin/moloch_add_user.sh admin "Admin User" $MOLOCH_PASSWORD --admin
 fi
 
 # Give option to wipe ElasticSearch
@@ -46,15 +46,15 @@ fi
 
 echo "Visit http://127.0.0.1:8005 with your favorite browser."
 echo "  user: admin"
-echo "  password: $ARKIME_PASSWORD"
+echo "  password: $MOLOCH_PASSWORD"
 
-mkdir -p /opt/arkime/logs
+mkdir -p /data/moloch/logs
 if [ "$CAPTURE" = "on" ]; then
     echo "Launch capture..."
     # Turn some network interface options off, otherwise capture program would not function
-    bin/arkime_config_interfaces.sh -c etc/config.ini
-    bin/capture ${OPTIONS}
+    bin/moloch_config_interfaces.sh -c etc/config.ini
+    bin/moloch-capture ${OPTIONS}
 elif [ "$VIEWER" = "on" ]; then
     echo "Launch viewer..."
-    cd /opt/arkime/viewer; /opt/arkime/bin/node viewer.js -c /opt/arkime/etc/config.ini ${OPTIONS}
+    cd /data/moloch/viewer; /data/moloch/bin/node viewer.js -c /data/moloch/etc/config.ini ${OPTIONS}
 fi 

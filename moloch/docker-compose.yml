@@ -2,7 +2,7 @@ version: '3'
 
 services:
   elasticsearch:
-    image: elasticsearch:7.14.1
+    image: elasticsearch:7.17.8
     ports:
       - 9200:9200
       - 9300:9300
@@ -20,7 +20,7 @@ services:
     volumes:
       - ./data:/usr/share/elasticsearch/data
   kibana:
-    image: kibana:7.14.1
+    image: kibana:7.17.8
     ports:
       - 5601:5601
     container_name: kibana
@@ -30,7 +30,7 @@ services:
     volumes:
       - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
   arkime-capture:
-    image: arkime:3.1.1-centos7
+    image: moloch:2.7.1-centos7
     container_name: arkime-capture
     environment:
       - ES_HOST=localhost
@@ -55,7 +55,7 @@ services:
       - ./scripts/startarkime.sh:/opt/arkime/bin/startarkime.sh
       - ./raw:/opt/arkime/raw
   arkime-viewer:
-    image: arkime:3.1.1-centos7
+    image: moloch:2.7.1-centos7
     container_name: arkime-viewer
     hostname: arkime
     environment:
@@ -77,5 +77,5 @@ services:
       - 8005:8005
     volumes:
       - ./scripts/startarkime.sh:/opt/arkime/bin/startarkime.sh
-      - ./raw:/data/arkime/raw
+      - ./raw:/opt/arkime/raw
     restart: always
