@@ -20,7 +20,9 @@ if [ "$1" == "--update" ];then
         https://raw.githubusercontent.com/wireshark/wireshark/master/manuf
 fi
 
-export ARKIME_VERSION=3.1.1
+export ARKIME_VERSION=4.6.0
 docker build \
+    -f "$ARKIME_VERSION.Dockerfile" \
+    --platform linux/amd64 \
     --build-arg ARKIME_VERSION=$ARKIME_VERSION \
     --force-rm --tag arkime:$ARKIME_VERSION-centos7 .
